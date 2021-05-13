@@ -67,7 +67,7 @@ export const getEvents = async (config: {
     const imageUrl = rawEvent.asset
       ? rawEvent.asset.image_original_url
       : undefined;
-    const osUrl = rawEvent.asset.permalink;
+    const osUrl = rawEvent.asset ? rawEvent.asset.permalink : undefined;
     const tokenId = rawEvent.asset
       ? parseInt(rawEvent.asset.token_id)
       : rawEvent.asset_bundle.assets.map((a) => parseInt(a.token_id));
@@ -88,7 +88,9 @@ export const getEvents = async (config: {
       result.push(event);
     } else if (rawEvent.event_type === EventType.Created) {
       const user = getBestUsername(rawEvent.from_account);
-      const isDutchAuction = rawEvent.auction_type === "dutch";
+      const isDutchAuction =
+        rawEvent.auction_type === "dutch" &&
+        rawEvent.starting_price !== rawEvent.ending_price;
       const event: OpenSeaEvent = {
         eventType: "sale_begin",
         osUrl,
