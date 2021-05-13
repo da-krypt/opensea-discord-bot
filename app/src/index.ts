@@ -1,5 +1,10 @@
+import { alertDiscord, GetAssetInfo } from "./discord";
 import { getEvents } from "./events";
 import { redisClient } from "./storage";
+
+const assetInfoFn: GetAssetInfo = async (tokenId: number) => {
+  return { name: `Solvency ${tokenId}` };
+};
 
 const go = async () => {
   const events = await getEvents({
@@ -7,7 +12,12 @@ const go = async () => {
     limit: 100,
     occurredAfter: 1620673859,
   });
-  console.log({ events });
+
+  const theEvents = events.slice(0, 2);
+  for (let i = 0; i < theEvents.length; ++i) {
+    const e = theEvents[i];
+    await alertDiscord(e, assetInfoFn);
+  }
 };
 
 go().then(() => {

@@ -11,6 +11,8 @@ interface OpenSeaEventBase {
   tokenId: number | number[];
   amount: number;
   currency: string;
+  imageUrl: string | undefined;
+  osUrl: string | undefined;
 }
 interface OpenSeaEventBid extends OpenSeaEventBase {
   eventType: "bid";
@@ -26,7 +28,7 @@ interface OpenSeaEventPurchase extends OpenSeaEventBase {
   purchase_from_user: string;
   purchase_to_user: string;
 }
-type OpenSeaEvent =
+export type OpenSeaEvent =
   | OpenSeaEventBid
   | OpenSeaEventSaleBegin
   | OpenSeaEventPurchase;
@@ -62,6 +64,10 @@ export const getEvents = async (config: {
   let result: OpenSeaEvent[] = [];
 
   rawEvents.forEach((rawEvent) => {
+    const imageUrl = rawEvent.asset
+      ? rawEvent.asset.image_original_url
+      : undefined;
+    const osUrl = rawEvent.asset.permalink;
     const tokenId = rawEvent.asset
       ? parseInt(rawEvent.asset.token_id)
       : rawEvent.asset_bundle.assets.map((a) => parseInt(a.token_id));
@@ -69,7 +75,9 @@ export const getEvents = async (config: {
     if (rawEvent.event_type === EventType.Successful) {
       const event: OpenSeaEvent = {
         eventType: "purchase",
+        osUrl,
         tokenId,
+        imageUrl,
         purchase_to_user: getBestUsername(rawEvent.winner_account),
         purchase_from_user: getBestUsername(rawEvent.seller),
         ...paymentInfo({
@@ -83,7 +91,9 @@ export const getEvents = async (config: {
       const isDutchAuction = rawEvent.auction_type === "dutch";
       const event: OpenSeaEvent = {
         eventType: "sale_begin",
+        osUrl,
         tokenId,
+        imageUrl,
         isDutchAuction,
         user,
         ...paymentInfo({
@@ -96,6 +106,8 @@ export const getEvents = async (config: {
       const user = getBestUsername(rawEvent.from_account);
       const event: OpenSeaEvent = {
         tokenId,
+        osUrl,
+        imageUrl,
         eventType: "bid",
         user,
         ...paymentInfo({
