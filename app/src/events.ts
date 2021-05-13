@@ -72,7 +72,6 @@ export const getEvents = async (config: {
         tokenId,
         purchase_to_user: getBestUsername(rawEvent.winner_account),
         purchase_from_user: getBestUsername(rawEvent.seller),
-        amount: 0, // todo
         ...paymentInfo({
           weiAmount: parseInt(rawEvent.total_price),
           token: rawEvent.payment_token,
