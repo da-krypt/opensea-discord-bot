@@ -58,7 +58,7 @@ const runAlert = async () => {
   console.debug(`${events.length} events found`);
 
   try {
-    const theEvents = events.slice(0, 5);
+    const theEvents = events;
     for (let i = 0; i < theEvents.length; ++i) {
       const e = theEvents[i];
       await alertDiscord(e, assetInfoFn);
