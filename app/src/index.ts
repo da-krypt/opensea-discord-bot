@@ -2,8 +2,9 @@ import { config } from "./config";
 import delay = require("delay");
 import { alertDiscord, GetAssetInfo } from "./discord";
 import { getEvents } from "./events";
-import { getLastFetch, redisClient, setLastFetch } from "./storage";
+import { getLastFetch, setLastFetch } from "./storage";
 import axios from "axios";
+import { schedule } from "node-cron";
 
 const TWENTY_FOUR_HOURS = 86400;
 
@@ -72,6 +73,25 @@ const runAlert = async () => {
   }
 };
 
-runAlert().then(() => {
-  process.exit();
-});
+let isRunning = false;
+const tick = async () => {
+  if (isRunning) {
+    console.log(`Not ticking because running`);
+    return;
+  }
+  console.log(`${new Date().toLocaleString()} Ticking...`);
+
+  isRunning = true;
+  try {
+    await runAlert();
+    console.log(`Tick completed successfully`);
+  } catch (e) {
+    console.error(e);
+    console.log(`Tick failed`);
+  } finally {
+    isRunning = false;
+  }
+};
+
+tick();
+schedule("*/2 * * * *", tick);
