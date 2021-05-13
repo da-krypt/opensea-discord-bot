@@ -44,7 +44,7 @@ const getBestUsername = (acct: OpenSeaAccount | null) => {
 const paymentInfo = (config: { weiAmount: number; token: PaymentToken }) => {
   const { weiAmount, token } = config;
   const amount = weiAmount / 10 ** token.decimals;
-  const currency = token.name;
+  const currency = token.symbol;
   return { amount, currency };
 };
 
@@ -67,7 +67,14 @@ export const getEvents = async (config: {
     const imageUrl = rawEvent.asset
       ? rawEvent.asset.image_original_url
       : undefined;
-    const osUrl = rawEvent.asset ? rawEvent.asset.permalink : undefined;
+
+    let osUrl: string | undefined = rawEvent.asset
+      ? rawEvent.asset.permalink
+      : undefined;
+    if (!osUrl && rawEvent.asset_bundle) {
+      osUrl = rawEvent.asset_bundle.permalink;
+    }
+
     const tokenId = rawEvent.asset
       ? parseInt(rawEvent.asset.token_id)
       : rawEvent.asset_bundle.assets.map((a) => parseInt(a.token_id));

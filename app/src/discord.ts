@@ -30,13 +30,17 @@ export const alertDiscord = async (
   const assetInfo = await getAssetInfo(osEvent.tokenId);
   const description = calculateDescription(osEvent);
 
-  const discordText = `${assetInfo.name} \n\n ${description} \n\n ${osEvent.osUrl}`;
+  const discordText = `${assetInfo.name} \n\n ${description} \n\n ${
+    osEvent.osUrl ? osEvent.osUrl : ""
+  }`;
   const imageUrl = osEvent.imageUrl;
 
-  const discordInfo = {
+  const discordInfo: any = {
     content: discordText,
-    embeds: [{ image: { url: imageUrl } }],
   };
+  if (imageUrl) {
+    discordInfo.embeds = [{ image: { url: imageUrl } }];
+  }
 
   console.log("alerting discord with", JSON.stringify(discordInfo));
   return axios.post(config.discordWebhookUrl, discordInfo);
