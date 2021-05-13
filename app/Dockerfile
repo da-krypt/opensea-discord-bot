@@ -6,4 +6,4 @@ COPY package.json .
 COPY yarn.lock .
 RUN yarn
 COPY . .
-RUN yarn dev
+CMD ["./node_modules/.bin/ts-node", "./src/index.ts"]
