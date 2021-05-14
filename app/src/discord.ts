@@ -6,7 +6,7 @@ export type GetAssetInfo = (
 import axios from "axios";
 
 const calculateDescription = (osEvent: OpenSeaEvent): string => {
-  const totalAmount = `${osEvent.amount} ${osEvent.currency}`;
+  const totalAmount = `**${osEvent.amount} ${osEvent.currency}**`;
 
   switch (osEvent.eventType) {
     case "sale_begin":
@@ -14,7 +14,7 @@ const calculateDescription = (osEvent: OpenSeaEvent): string => {
         //
         return `Dutch auction began (ending at ${totalAmount}) by ${osEvent.user}`;
       } else {
-        return `For sale for ${totalAmount} by ${osEvent.user}`;
+        return `Listed for sale for ${totalAmount} by ${osEvent.user}`;
       }
     case "purchase":
       return `Purchased for ${totalAmount} by ${osEvent.purchase_to_user} from ${osEvent.purchase_from_user}`;
@@ -30,7 +30,7 @@ export const alertDiscord = async (
   const assetInfo = await getAssetInfo(osEvent.tokenId);
   const description = calculateDescription(osEvent);
 
-  const discordText = `${assetInfo.name} \n\n ${description} \n\n ${
+  const discordText = `**${assetInfo.name}**\n\n${description}\n\n ${
     osEvent.osUrl ? osEvent.osUrl : ""
   }`;
   const imageUrl = osEvent.imageUrl;

@@ -38,7 +38,7 @@ const getBestUsername = (acct: OpenSeaAccount | null) => {
     return "unknown";
   }
   const niceName = acct.user && acct.user.username;
-  return niceName ? niceName : acct.address;
+  return niceName ? niceName : acct.address.substr(0, 8);
 };
 
 const paymentInfo = (config: { weiAmount: number; token: PaymentToken }) => {
