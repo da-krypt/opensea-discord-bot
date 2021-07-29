@@ -23,10 +23,23 @@ const calculateDescription = (osEvent: OpenSeaEvent): string => {
   }
 };
 
+export const shouldSkipDiscordAlert = (osEvent: OpenSeaEvent) => {
+  return (
+    osEvent.eventType === "bid" &&
+    osEvent.currency === "WETH" &&
+    osEvent.amount < config.bidEthMinimum
+  );
+};
+
 export const alertDiscord = async (
   osEvent: OpenSeaEvent,
   getAssetInfo: GetAssetInfo
 ) => {
+  if (shouldSkipDiscordAlert(osEvent)) {
+    console.log(`Skipping event ${osEvent} because doesn't meet threshold`);
+    return;
+  }
+
   const assetInfo = await getAssetInfo(osEvent.tokenId);
   const description = calculateDescription(osEvent);
 
