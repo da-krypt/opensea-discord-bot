@@ -14,7 +14,7 @@ const stringOrError = (val: string | undefined) => {
 };
 
 export const config = {
-  bidEthMinimum: 1.5,
+  bidEthMinimum: 15,
   smartContractAddress: stringOrError(process.env.SMART_CONTRACT_ADDRESS),
   discordWebhookUrl: stringOrError(process.env.DISCORD_WEBHOOK_URL),
 };
