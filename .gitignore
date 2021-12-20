@@ -1,7 +1,5 @@
-/app/node_modules
-/app/.env.local
-/scripts/new_machine.sh
-/app/tmp
-/app/src/demo.ts
-/app/transpiled
-/app/tmp_images
+node_modules
+env.local
+tmp
+./src/demo.ts
+transpiled
