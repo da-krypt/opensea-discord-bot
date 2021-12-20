@@ -4,7 +4,6 @@ import { alertDiscord, GetAssetInfo } from "./discord";
 import { getEvents } from "./events";
 import { getLastFetch, setLastFetch } from "./storage";
 import axios from "axios";
-import { schedule } from "node-cron";
 
 const TWENTY_FOUR_HOURS = 86400;
 
@@ -94,4 +93,3 @@ const tick = async () => {
 };
 
 tick();
-schedule("*/2 * * * *", tick);

@@ -19,7 +19,6 @@
     "delay": "^5.0.0",
     "dotenv": "^8.2.0",
     "ioredis": "^4.27.2",
-    "node-cron": "^2.0.3",
     "opensea-js": "^1.1.10"
   }
 }
