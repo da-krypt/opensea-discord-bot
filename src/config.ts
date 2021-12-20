@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: ".env.local" });
 
 const stringOrError = (val: string | undefined) => {
   if (!val) {
