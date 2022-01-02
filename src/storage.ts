@@ -2,8 +2,9 @@ import * as Redis from "ioredis";
 const LAST_FETCH_REDIS_KEY = "last_fetch";
 const IS_RUNNING_REDIS_KEY = "is_running";
 
-export let redisClient = new Redis(6379, "redis");
+export let redisClient = new Redis(6379, "localhost");
 if (process.env.REDIS_URI) {
+  console.log("connecting to redis URI", process.env.REDIS_URI);
   redisClient = new Redis(process.env.REDIS_URI);
 }
 
