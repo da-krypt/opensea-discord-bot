@@ -2,9 +2,14 @@ import { config } from "./config";
 import delay = require("delay");
 import { alertDiscord, GetAssetInfo } from "./discord";
 import { getEvents } from "./events";
-import { getLastFetch, setLastFetch } from "./storage";
+import {
+  getIsRunning,
+  getLastFetch,
+  setIsNotRunning,
+  setIsRunning,
+  setLastFetch,
+} from "./storage";
 import axios from "axios";
-import { schedule } from "node-cron";
 
 const TWENTY_FOUR_HOURS = 86400;
 
@@ -48,7 +53,8 @@ const runAlert = async () => {
   }
 
   const occurredAfter = parseInt(occurredAfterString);
-  console.debug(`Fetching from timestamp`, occurredAfter);
+  const newTime = currentUnixEpochSeconds();
+  console.debug(`Fetching from timestamp`, occurredAfter, "to", newTime);
 
   const events = await getEvents({
     contractAddress: config.smartContractAddress,
@@ -67,21 +73,20 @@ const runAlert = async () => {
   } catch (e) {
     console.error(e);
   } finally {
-    const newTime = currentUnixEpochSeconds();
     console.log(`Complete fetch from`, occurredAfter, `to`, newTime);
     await setLastFetch(newTime);
   }
 };
 
-let isRunning = false;
 const tick = async () => {
+  const isRunning = await getIsRunning();
   if (isRunning) {
     console.log(`Not ticking because running`);
     return;
   }
   console.log(`${new Date().toLocaleString()} Ticking...`);
 
-  isRunning = true;
+  await setIsRunning();
   try {
     await runAlert();
     console.log(`Tick completed successfully`);
@@ -89,9 +94,10 @@ const tick = async () => {
     console.error(e);
     console.log(`Tick failed`);
   } finally {
-    isRunning = false;
+    await setIsNotRunning();
   }
 };
 
-tick();
-schedule("*/2 * * * *", tick);
+tick().then(() => {
+  process.exit();
+});

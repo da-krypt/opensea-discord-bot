@@ -1,1 +1,0 @@
-./scripts/docker_compose_dev.sh down && ./scripts/docker_compose_dev.sh up --build

@@ -6,6 +6,7 @@ import {
   PaymentToken,
 } from "./opensea_types";
 import axios from "axios";
+import { config } from "./config";
 
 interface OpenSeaEventBase {
   tokenId: number | number[];
@@ -48,16 +49,20 @@ const paymentInfo = (config: { weiAmount: number; token: PaymentToken }) => {
   return { amount, currency };
 };
 
-export const getEvents = async (config: {
+export const getEvents = async (eventConfig: {
   contractAddress: string;
   occurredAfter: number;
   limit: number;
 }) => {
-  const { contractAddress, limit, occurredAfter } = config;
+  const { contractAddress, limit, occurredAfter } = eventConfig;
   const url = `https://api.opensea.io/api/v1/events?only_opensea=true&limit=${limit}&occurred_after=${occurredAfter}&asset_contract_address=${contractAddress}`;
   console.debug(`Fetching OpenSea ${url}`);
 
-  const requestResponse = await axios.get(url);
+  const requestResponse = await axios.get(url, {
+    headers: {
+      "X-API-KEY": config.openseaApiKey,
+    },
+  });
   const response = requestResponse.data as OpenSeaEventResponse;
   const rawEvents = response.asset_events;
 
